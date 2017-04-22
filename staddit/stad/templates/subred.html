@@ -1,0 +1,30 @@
+<!-- stad/templates/subreddit.html -->
+{% extends 'layout/layout.html' %}
+{% load django_tables2 %}
+{% block atitle %}Home Page{% endblock %}
+
+{% block content %}
+<form method = 'POST' action = ''>{% csrf_token %}
+    {{form}}
+    <input type = 'submit' value = 'query' />
+</form>
+
+{% render_table table %}
+
+{% endblock %}
+<!--
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <link rel = "stylesheet" href = "style.css">
+        <title>Subreddit search</title>
+    </head>
+    <body>
+    	<form>
+    		<input type = "text" name = "subreddit" placeholder= "subreddit">
+    		<input type="submit" value = "submit">
+    	</form>
+    </body>
+</html>
+-->

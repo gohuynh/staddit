@@ -1,0 +1,4 @@
+1. Join tables in views.py such that queries can access multiple relations
+	a. https://docs.djangoproject.com/en/1.11/topics/db/queries/
+	b. https://docs.djangoproject.com/en/1.11/ref/models/querysets/
+

@@ -1,0 +1,22 @@
+<!-- stad/templates/user.html -->
+{% extends 'layout/layout.html' %}
+{% load django_tables2 %}
+{% block atitle %}Home Page{% endblock %}
+
+{% block content %}
+
+
+<form method = 'POST' action = ''>{% csrf_token %}
+    {{form}}
+    <input type = 'submit' value = 'query' />
+</form>
+<div class = "container-fluid">
+    <h3>table</h3>
+    <div class = "row">
+        <div class = "col-sm-10">
+            {% render_table table %}
+        </div>
+    </div>
+</div>
+
+{% endblock %}

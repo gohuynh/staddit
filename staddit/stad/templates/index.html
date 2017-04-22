@@ -1,0 +1,63 @@
+<!-- stad/templates/index.html -->
+{% extends 'layout/layout.html' %}
+{% load django_tables2 %}
+<!DOCTYPE html>
+
+{% block atitle %}Home Page{% endblock %}
+
+{% block content %}
+
+
+
+{{title}}
+
+<form method = 'POST' action = ''>{% csrf_token %}
+{{form}}
+
+<input type = 'submit' value = 'query' />
+</form>
+{% endblock %}
+<!--
+<div class = "container-fluid">
+	<div class = "row">
+		<div class = "col-sm-10">
+			% render_table table %
+		</div>
+	</div>
+</div>
+-->
+
+
+<!--
+<table id = "redditorTable" class = "tablesorter" border = "1"> 
+<thead>
+	<tr>
+		<th>Redditor</th>
+		<th>Comment</th>
+	</tr>
+</thead>
+<tbody>
+	{% for entry in data %}
+		<tr>
+			<th>{{entry.author}}</th>
+			<th>{{entry.id}}</th>
+		</tr>
+	{% endfor %}
+</tbody>
+</table>
+-->
+<!--% endblock % -->
+
+
+<!--<body>
+{% block chooseform %}
+{% endblock %}
+</body>
+-->
+<!--    <body>
+       <h1> welcome </h1>
+        <input type="button" onclick="location.href='/subred';" value="search by subreddit" />
+        <input type="button" onclick="location.href='/user';" value="search by redditor"/>
+        <a href="/about/">About Me</a>
+    </body>
+-->
