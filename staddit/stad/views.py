@@ -1,12 +1,12 @@
  # stad/views.py
 from django.db import connection
+from django.db.models import Q
 from django.shortcuts import render
 from stad import forms
+from stad import helper
 from stad import models
-from django.db.models import Q
-from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 import django_tables2 as tables
-from nltk.tokenize import sent_tokenize
+
 
 # Create your views here.
 curTab = '' #Oh great! A global variable!
@@ -91,8 +91,7 @@ def subred(request):
 		form = forms.subredditForm()
 
 	#qs = models.Posted_By.objects.filter(Q(author = 'DrunkGirl69') | Q(author = 'Thaddel') )
-	
-	#form = forms.subredditForm(data = request.POST or None)
+
 	context = {
 		"title": title,
 		"form": form,
@@ -115,36 +114,15 @@ def user(request):
 
 		if form.is_valid():
 			inRedditor = form.cleaned_data['author']
-			cur.execute("""select subreddit from posted_in, posted_by where posted_by.author = '"""+inRedditor+"""' and posted_by.id = posted_in.id group by subreddit order by count(subreddit) desc limit 3""")
-
-
-			subQuer = cur.fetchall()
-
-			for sub in range(len(subQuer)):
-				subQuer[sub] = subQuer[sub][0]
-
-			cur.execute("""select body, score, subreddit from comment, posted_in, posted_by where posted_by.author = '"""+inRedditor+"""' and posted_by.id = posted_in.id and comment.id = posted_by.id order by score desc limit 1""")
-			topCom = cur.fetchone()
 			
+			subQuer = helper.mostPosted(inRedditor)
+			topCom = helper.topScoring(inRedditor)
+			scores = helper.sentimentAnalysis(inRedditor)
 
-			cur.execute("""select body from posted_by, comment where posted_by.id = comment.id and posted_by.author = '"""+inRedditor+"""' limit 100""")
-			comms = cur.fetchall()
-			sentences = []
-			avgScore = 0
-			scores = []
-			analyzer = SentimentIntensityAnalyzer()
-			for c in comms:
-				sentences.extend(sent_tokenize(c[0]))
-			for sen in sentences:
-				thisScore = analyzer.polarity_scores(sen)['compound']
-				scores.append(thisScore)
-				avgScore += thisScore
+			avgScore = scores[0]
+			minScore = scores[1]
+			maxScore = scores[2]
 
-			avgScore = avgScore/len(sentences)
-			
-			minScore = sentences[scores.index(min(scores))], min(scores)
-			maxScore = sentences[scores.index(max(scores))], max(scores)
-			#qs = models.Posted_By.objects.filter(author = inRedditor)
 			qs = models.Posted_By.objects.select_related().filter(author = inRedditor)
 			table = post_by_Table(qs, order_by = '-id')
 			curTab = table
