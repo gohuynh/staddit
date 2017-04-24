@@ -9,7 +9,7 @@ from stad.views import user
 urlpatterns = [
 	url(r'^$', index, name = 'home'),
     #url(r'^$', views.HomePageView.as_view()),
-    url(r'^about/$', views.AboutPageView.as_view()), #add about page
+    #url(r'^about/$', views.AboutPageView.as_view()), #add about page
     #url(r'^subred/$', views.subred.as_view()),
  	url(r'^user/$', user, name = 'user'),
  	url(r'^subred/$', subred, name = 'subred'),

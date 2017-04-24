@@ -1,28 +1,16 @@
  # stad/views.py
+from django.db import connection
 from django.shortcuts import render
-from django.views.generic import TemplateView
-from django.template.response import TemplateResponse
-from django.http import HttpResponse
 from stad import forms
 from stad import models
 from django.db.models import Q
+from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 import django_tables2 as tables
+from nltk.tokenize import sent_tokenize
 
-#from stad.forms import postedByForm
-"""
-import psycopg2
-import psycopg2.extras
-
-conn = psycopg2.connect('dbname = reddit host = localhost user = postgres password = butt')
-cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
-cur.execute('select * from posted_in limit 10')
-ans = cur.fetchall()
-ans1 = []
-for row in ans:
-	ans1.append(dict(row))
-"""
 # Create your views here.
 curTab = '' #Oh great! A global variable!
+cur = connection.cursor()
 
 class post_by_Table(tables.Table):
 	author = tables.Column(order_by='author')
@@ -68,6 +56,7 @@ def subred(request):
 		if form.is_valid():
 			print('hi')
 			inSubreddit = form.cleaned_data['subreddit']
+
 			#THIS IS A QUERY BELOW
 			qs = models.Posted_In.objects.filter(subreddit = inSubreddit)
 			table = post_in_Table(qs, order_by = '-id')
@@ -117,8 +106,8 @@ def user(request):
 	title = 'User search'
 	global curTab
 
-	inSubreddit = ''
 	form = forms.redditorForm(request.POST or None)
+	inSubreddit = ''
 
 	if request.method == 'POST':
 		print(request.POST)
@@ -126,18 +115,64 @@ def user(request):
 
 		if form.is_valid():
 			inRedditor = form.cleaned_data['author']
+			cur.execute("""select subreddit from posted_in, posted_by where posted_by.author = '"""+inRedditor+"""' and posted_by.id = posted_in.id group by subreddit order by count(subreddit) desc limit 3""")
 
+
+			subQuer = cur.fetchall()
+
+			for sub in range(len(subQuer)):
+				subQuer[sub] = subQuer[sub][0]
+
+			cur.execute("""select body, score, subreddit from comment, posted_in, posted_by where posted_by.author = '"""+inRedditor+"""' and posted_by.id = posted_in.id and comment.id = posted_by.id order by score desc limit 1""")
+			topCom = cur.fetchone()
+			
+
+			cur.execute("""select body from posted_by, comment where posted_by.id = comment.id and posted_by.author = '"""+inRedditor+"""' limit 100""")
+			comms = cur.fetchall()
+			sentences = []
+			avgScore = 0
+			scores = []
+			analyzer = SentimentIntensityAnalyzer()
+			for c in comms:
+				sentences.extend(sent_tokenize(c[0]))
+			for sen in sentences:
+				thisScore = analyzer.polarity_scores(sen)['compound']
+				scores.append(thisScore)
+				avgScore += thisScore
+
+			avgScore = avgScore/len(sentences)
+			
+			minScore = sentences[scores.index(min(scores))], min(scores)
+			maxScore = sentences[scores.index(max(scores))], max(scores)
 			#qs = models.Posted_By.objects.filter(author = inRedditor)
 			qs = models.Posted_By.objects.select_related().filter(author = inRedditor)
 			table = post_by_Table(qs, order_by = '-id')
-			#tables.RequestConfig(request, paginate={'per_page': 10}).configure(table)
+			curTab = table
+			if table:
+				table.paginate(page = request.GET.get('page', 1), per_page = 12)
 
 			context = {
+				'user': inRedditor,
 				'table': table,
 				'form': form,
 				'title': title,
+				'subQuer': subQuer,
+				'topCom' :topCom,
+				'avgScore' :avgScore,
+				'minScore' :minScore,
+				'maxScore': maxScore,
 			}
 			return render(request, 'user.html', context)
+
+	elif request.GET:
+		curTab.paginate(page = request.GET.get('page', 1), per_page = 12)
+		context = {
+			'table': curTab,
+			'form': form,
+			'title': title,
+		}
+		return render(request, 'user.html', context)
+
 	else:
 		form = forms.redditorForm()
 
@@ -148,7 +183,9 @@ def user(request):
 
 	return render(request, 'index.html', context)
 
-class AboutPageView(TemplateView):
-    template_name = "about.html"
+
+
+#class AboutPageView(TemplateView):
+   # template_name = "about.html"
 
 

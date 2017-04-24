@@ -5,13 +5,41 @@
 
 {% block content %}
 
-
 <form method = 'POST' action = ''>{% csrf_token %}
     {{form}}
     <input type = 'submit' value = 'query' />
 </form>
+<h1 align = "center">/u/{{user}}</h1>
+
+<h1>Top comment: </h1>
+<blockquote class = "quote-block">
+{{topCom.0}}    
+<cite>{{user}} in <a href = "http://www.reddit.com/r/{{topCom.2}}">/r/{{topCom.2}}</a> with {{topCom.1}} points</cite>
+</blockquote>
+
+<h1>Sentiment analysis: </h1>
+Avg. score: {{avgScore}}<br>
+Min. score: {{minScore.1}}
+<blockquote class = "quote-block">
+    {{minScore.0}}
+    <cite><a href = "http://www.reddit.com/u/{{user}}">/u/{{user}}</a> </cite>
+</blockquote>
+Max. score: {{maxScore.1}}
+<blockquote class = "quote-block">
+    {{maxScore.0}}
+    <cite><a href = "http://www.reddit.com/u/{{user}}">/u/{{user}}</a> </cite>
+</blockquote>
+
+<h1>Most commented in Subreddits:</h1>
+    <ol>
+        {% for sub in subQuer %}
+            <li><a href = "http://www.reddit.com/r/{{sub}}">/r/{{sub}}</a></li>
+        {% endfor %}
+    </ol>
+
+<h1>Jan. 17 comments</h1>
 <div class = "container-fluid">
-    <h3>table</h3>
+    <!--<h3>table</h3>-->
     <div class = "row">
         <div class = "col-sm-10">
             {% render_table table %}
