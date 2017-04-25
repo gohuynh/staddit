@@ -24,10 +24,10 @@ class Comment(models.Model):
         db_table = 'comment'
 
     def __str__(self):
-        return self.body
-
-    def get_absolute_url(self):
         return self.id
+
+    #def get_absolute_url(self):
+        #return self.id
 
 class Redditor(models.Model):
     author = models.TextField(primary_key=True)
@@ -39,8 +39,6 @@ class Redditor(models.Model):
     def __str__(self):
         return self.author
 
-    def get_absolute_url(self):
-        return self.author
 
 class Subreddit(models.Model):
     subreddit = models.TextField(primary_key=True)
@@ -53,7 +51,8 @@ class Subreddit(models.Model):
         return self.subreddit
 
 class Posted_By(models.Model):
-    author = models.ForeignKey('Redditor', models.DO_NOTHING, db_column='author')
+    #author = models.ForeignKey('Redditor', models.DO_NOTHING, db_column='author')
+    author = models.TextField()
     id = models.ForeignKey(Comment, models.DO_NOTHING, db_column='id', primary_key=True)
 
     class Meta:
@@ -61,7 +60,8 @@ class Posted_By(models.Model):
         db_table = 'posted_by'
 
     def __str__(self):
-        return self.author, self.id
+        return self.author
+
 
 class Posted_In(models.Model):
     subreddit = models.ForeignKey('Subreddit', models.DO_NOTHING, db_column='subreddit')
@@ -73,7 +73,7 @@ class Posted_In(models.Model):
         db_table = 'posted_in'
 
     def __str__(self):
-        return self.id, self.subreddit
+        return self.subreddit#self.id, self.subreddit
 
 
 class AuthGroup(models.Model):

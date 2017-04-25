@@ -8,16 +8,21 @@ from stad import models
 import django_tables2 as tables
 
 
-# Create your views here.
 curTab = '' #Oh great! A global variable!
 cur = connection.cursor()
 
-class post_by_Table(tables.Table):
+class post_by_Table(tables.Table): 
+	"""django-tables table with authors and comments"""
 	author = tables.Column(order_by='author')
-	id = tables.Column()
+	id = tables.Column(accessor = 'id.id')
+	body = tables.Column(accessor = 'id.body')
+	created_utc = tables.Column(accessor = 'id.created_utc')
+	gilded = tables.Column(accessor = 'id.gilded')
+	score = tables.Column(accessor = 'id.score')
+	sub = tables.Column(accessor = 'Posted_in.subreddit')
 
 	class Meta:
-		model = models.Posted_By;
+		model = models.Posted_By
 		attrs = {'class': 'table table-bordered table-striped table-hover', 'border': 1}
 		template = 'django_tables2/bootstrap.html'
 
@@ -90,7 +95,7 @@ def subred(request):
 		print(request.GET)
 		form = forms.subredditForm()
 
-	#qs = models.Posted_By.objects.filter(Q(author = 'DrunkGirl69') | Q(author = 'Thaddel') )
+	#qs = models.Posted_By.objects.filter(Q(author = 'keanex') | Q(author = 'Thaddel') )
 
 	context = {
 		"title": title,
@@ -98,8 +103,7 @@ def subred(request):
 	}
 	
 	
-	#table = postbyTable(ans1)
-	return render(request, 'index.html',context)#, 'form': form})
+	return render(request, 'index.html',context)
 
 def user(request):
 	title = 'User search'
@@ -110,7 +114,6 @@ def user(request):
 
 	if request.method == 'POST':
 		print(request.POST)
-		#form = forms.redditorForm(request.POST or None)
 
 		if form.is_valid():
 			inRedditor = form.cleaned_data['author']
@@ -123,8 +126,8 @@ def user(request):
 			minScore = scores[1]
 			maxScore = scores[2]
 
-			qs = models.Posted_By.objects.select_related().filter(author = inRedditor)
-			table = post_by_Table(qs, order_by = '-id')
+			qs = models.Posted_By.objects.filter(author = inRedditor).select_related("id")
+			table = post_by_Table(qs)#, order_by = '-id')
 			curTab = table
 			if table:
 				table.paginate(page = request.GET.get('page', 1), per_page = 12)
@@ -139,6 +142,7 @@ def user(request):
 				'avgScore' :avgScore,
 				'minScore' :minScore,
 				'maxScore': maxScore,
+				'qs': qs,
 			}
 			return render(request, 'user.html', context)
 

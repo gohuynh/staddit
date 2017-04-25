@@ -9,10 +9,6 @@ class postedByForm(forms.Form):
 
 
 class subredditForm(forms.Form):
-	#class Meta:
-	#	model = models.Subreddit
-	#	fields = ['subreddit']
-		#attrs = {'class': 'abc'}
 	subreddit = forms.CharField(label = 'sub', max_length = 25)
 
 	def clean_sub(self):
@@ -21,8 +17,6 @@ class subredditForm(forms.Form):
 			raise forms.ValidationError("Please enter a valid subreddit")
 		return sub
 
-	#def is_valid(self):
-		#return True
 
 class redditorForm(forms.Form):
 	author = forms.CharField(label = 'redditor', max_length = 25)

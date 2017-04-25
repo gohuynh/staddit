@@ -38,6 +38,22 @@ Max. score: {{maxScore.1}}
     </ol>
 
 <h1>Jan. 17 comments</h1>
+
+<div>
+    <table>
+        <tr>
+        <th>Body</th>
+        </tr>
+        {% for x in qs %}
+        <tr>
+        <th>Hi{{x.id.score}}</th>
+        </tr>
+        {% endfor %}
+
+
+    </table>
+</div>
+<br><br>
 <div class = "container-fluid">
     <!--<h3>table</h3>-->
     <div class = "row">

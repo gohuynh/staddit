@@ -6,6 +6,7 @@ from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 
 cur = connection.cursor()
 
+
 def mostPosted(redditor):
 	"""return top 3 most poted in subreddits for a redditor"""
 
