@@ -1,17 +1,33 @@
-<!-- stad/templates/subreddit.html -->
 {% extends 'layout/layout.html' %}
 {% load django_tables2 %}
+<!DOCTYPE html>
+
 {% block atitle %}Home Page{% endblock %}
 
-{% block content %}
-<form method = 'POST' action = ''>{% csrf_token %}
-    {{form}}
-    <input type = 'submit' value = 'query' />
-</form>
+{% block navbar %}
+              <li><a href="/#">Home</a></li>
+              <li class="active"><a href="/subred">Subreddits</a></li>
+              <li><a href="/user">Redditors</a></li>
+              <li><a href="/viz">Vizualizations</a></li>
+{% endblock %}
 
-{% render_table table %}
+{% block content %}
+
+<div class="jumbotron">
+     <div class="container">
+        <h1>Search a Subreddit</h1>
+        <p><form method = 'POST' action = ''>
+            {% csrf_token %}{{form}}
+            <input type = 'submit' value = 'Search' /></form>
+        </p>
+     </div>
+</div>
 
 {% endblock %}
+
+<!-- {% render_table table %} -->
+
+
 <!--
 <!DOCTYPE html>
 <html>
@@ -27,4 +43,3 @@
     	</form>
     </body>
 </html>
--->
