@@ -13,16 +13,28 @@
 
 {% block content %}
 
-<div class="jumbotron">
-     <div class="container">
-        <h1>Welcome to Staddit!</h1>
-        <p>Explore the thousands of Reddit communities available. From /r/astrology to /r/zen, we have an extensive collection of comments within these subreddits. From any subreddit you specify, you can view general information about all the comments posted there such as the user, body, and score that the comment received. For any given user, you can see the comments they have posted and to where they have posted. Additionally you can see a visualization of the similarity of subreddit preferences among users.</p>
-        <p><form method = 'POST' action = ''>
-            {% csrf_token %}{{form}}
-            <input type = 'submit' value = 'Search' /></form>
-        </p>
-     </div>
-</div>
+<h1 align = "center">/r/{{subreddit}}</h1>
+
+<h1>Top comment: </h1>
+<blockquote class = "quote-block">
+{{topComm.0}}    
+<cite> <a href = "http://www.reddit.com/u/{{topComm.1}}">{{topComm.1}}</a> in /r/{{subreddit}}</a> with {{topComm.2}} points</cite>
+</blockquote>
+
+<h1>Most prodigious commenters:</h1>
+    <ol>
+    {% for u in mostPosted %}
+        <li><a href = "http://www.reddit.com/u/{{u.0}}"> {{u.0}}</a> ({{u.1}})</li> 
+    {% endfor %}
+    </ol>
+
+<h1>Sentiment analysis:</h1>
+Average score: {{avgScore}} <br>
+Median score: {{medScore}} <br>
+Standard Deviation of score: {{stdScore}}
+
+
+<h1>Record of comments in /r/{{subreddit}} from January 2017</h1>
 
 {% render_table table %}
 
