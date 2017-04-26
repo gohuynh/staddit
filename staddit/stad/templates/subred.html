@@ -9,6 +9,29 @@
     <input type = 'submit' value = 'query' />
 </form>
 
+<h1 align = "center">/r/{{subreddit}}</h1>
+
+<h1>Top comment: </h1>
+<blockquote class = "quote-block">
+{{topComm.0}}    
+<cite> <a href = "http://www.reddit.com/u/{{topComm.1}}">{{topComm.1}}</a> in /r/{{subreddit}}</a> with {{topComm.2}} points</cite>
+</blockquote>
+
+<h1>Most prodigious commenters:</h1>
+    <ol>
+    {% for u in mostPosted %}
+        <li><a href = "http://www.reddit.com/u/{{u.0}}"> {{u.0}}</a> ({{u.1}})</li> 
+    {% endfor %}
+    </ol>
+
+<h1>Sentiment analysis:</h1>
+Average score: {{avgScore}} <br>
+Median score: {{medScore}} <br>
+Standard Deviation of score: {{stdScore}}
+
+
+<h1>Record of comments in /r/{{subreddit}} from January 2017</h1>
+
 {% render_table table %}
 
 {% endblock %}
