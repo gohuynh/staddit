@@ -2,7 +2,7 @@
 {% load django_tables2 %}
 <!DOCTYPE html>
 
-{% block atitle %}Home Page{% endblock %}
+{% block atitle %}Subreddits{% endblock %}
 
 {% block navbar %}
               <li><a href="/#">Home</a></li>
@@ -13,11 +13,12 @@
 
 {% block content %}
 
-<div class="jumbotron">
+<div class="jumbotron" align="center">
      <div class="container">
-        <h1>Search a Subreddit</h1>
+        <h1><font size = "8">Search a Subreddit</font></h1>
         <p><form method = 'POST' action = ''>
-            {% csrf_token %}{{form}}
+            <label for="subreddit">/r/</label>
+            {% csrf_token %}<input type = "text" name = "subreddit" placeholder = "subreddit">
             <input type = 'submit' value = 'Search' /></form>
         </p>
      </div>
