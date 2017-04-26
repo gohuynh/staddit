@@ -1,5 +1,6 @@
 {% extends 'layout/layout.html' %}
 {% load django_tables2 %}
+
 <!DOCTYPE html>
 
 {% block atitle %}Redditors{% endblock %}
@@ -19,7 +20,6 @@
         <p><form method = 'POST' action = ''>
         	<label for="author">/u/</label>
             {% csrf_token %}<input type = "text" name = "author" placeholder = "user">
-            <!-- {% csrf_token %}{{form}} -->
             <input type = 'submit' value = 'Search' /></form>
         </p>
      </div>
