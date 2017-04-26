@@ -46,6 +46,8 @@ class post_in_Table(tables.Table):
 		attrs = {'class': 'table table-bordered table-striped table-hover', 'border': 1}
 		template = 'django_tables2/bootstrap.html'
 
+def about(request):
+	return render(request, 'about.html', {})
 
 def index (request):
 	title = "Main page"
@@ -198,6 +200,8 @@ def user(request):
 
 	return render(request, 'usearch.html', context)
 
+def viz(request):
+	return render(request, 'visual.html', {})
 
 
 #class AboutPageView(TemplateView):

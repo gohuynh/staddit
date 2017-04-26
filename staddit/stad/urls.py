@@ -4,6 +4,8 @@ from stad import views
 from stad.views import index
 from stad.views import subred
 from stad.views import user
+from stad.views import about
+from stad.views import viz
 #from stad.views import subredresult
 
 urlpatterns = [
@@ -15,4 +17,6 @@ urlpatterns = [
  	url(r'^subred/$', subred, name = 'subred'),
  	#url(r'^subredresult/$', subredresult, name = 'subredresult'),
  #	url(r'^(?P<author>\s+))/$', usearch, name = 'search')
+ 	url(r'^about/$', about, name = 'about'),
+ 	url(r'^viz/$', viz, name = 'viz'),
 ]
