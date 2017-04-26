@@ -57,7 +57,7 @@ def index (request):
 	}
 	
 
-	return render(request, 'index.html',context)
+	return render(request, 'home.html',context)
 
 def subred(request):
 	title = "Sub search"
@@ -101,7 +101,7 @@ def subred(request):
 
 			}
 			subContext = context
-			return render(request, 'subred.html',context)
+			return render(request, 'subredresult.html',context)
 
 	elif request.GET:
 		print('not empty')
@@ -115,7 +115,7 @@ def subred(request):
 				'form': form,
 				'title': title,
 			}
-		return render(request, 'subred.html', context)
+		return render(request, 'subredresult.html', context)
 
 
 	else:
@@ -131,7 +131,7 @@ def subred(request):
 	}
 	
 	
-	return render(request, 'index.html',context)
+	return render(request, 'subred.html',context)
 
 def user(request):
 	title = 'User search'
