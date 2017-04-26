@@ -8,18 +8,23 @@ from stad import models
 import django_tables2 as tables
 
 
-curTab = '' #Oh great! A global variable!
+#global variables to handle next page GET requests
+curTab = '' 
+subContext = ''
+userContext = ''
+
+
 cur = connection.cursor()
 
 class post_by_Table(tables.Table): 
 	"""django-tables table with authors and comments"""
-	author = tables.Column(order_by='author')
+	author = tables.Column()
 	id = tables.Column(accessor = 'id.id')
 	body = tables.Column(accessor = 'id.body')
 	created_utc = tables.Column(accessor = 'id.created_utc')
 	gilded = tables.Column(accessor = 'id.gilded')
-	score = tables.Column(accessor = 'id.score')
-	sub = tables.Column(accessor = 'Posted_in.subreddit')
+	score = tables.Column(accessor = 'id.score', order_by='score')
+	created_utc = tables.Column(accessor = 'id.created_utc')
 
 	class Meta:
 		model = models.Posted_By
@@ -28,8 +33,13 @@ class post_by_Table(tables.Table):
 
 
 class post_in_Table(tables.Table):
-	subreddit = tables.Column(order_by='subreddit')
-	id = tables.Column()
+	subreddit = tables.Column()
+	id = tables.Column(accessor = 'id.id')
+	body = tables.Column(accessor = 'id.body')
+	created_utc = tables.Column(accessor = 'id.created_utc')
+	gilded = tables.Column(accessor = 'id.gilded')
+	score = tables.Column(accessor = 'id.score', order_by='score')
+	redditor = tables.Column(accessor = 'id.Posted_By.author')
 
 	class Meta:
 		model = models.Posted_In;
@@ -52,6 +62,7 @@ def index (request):
 def subred(request):
 	title = "Sub search"
 	global curTab
+	global subContext
 
 	form = forms.subredditForm(request.POST or None)
 	inSubreddit = ''
@@ -62,30 +73,48 @@ def subred(request):
 			print('hi')
 			inSubreddit = form.cleaned_data['subreddit']
 
+			mostPostSub = helper.mostPostedSub(inSubreddit)
+			topComm = helper.topScoringSub(inSubreddit)
+			scores = helper.sentimentAnalysisSub(inSubreddit)
+
+			avgScore = scores[0]
+			stdScore = scores[1]
+			medScore = scores[2]
+
 			#THIS IS A QUERY BELOW
 			qs = models.Posted_In.objects.filter(subreddit = inSubreddit)
 			table = post_in_Table(qs, order_by = '-id')
 			curTab = table
 			if table:
-				table.paginate(page = request.GET.get('page', 1), per_page = 12)
+				table.paginate(page = request.GET.get('page', 1), per_page = 17)
 
 			context = {
+				"subreddit": inSubreddit,
 				"table": table,
 				"form": form,
 				"title": title,
-			}
+				"mostPosted": mostPostSub,
+				"topComm": topComm,
+				"avgScore": avgScore,
+				"stdScore": stdScore,
+				"medScore": medScore,
 
+			}
+			subContext = context
 			return render(request, 'subredresult.html',context)
 
 	elif request.GET:
 		print('not empty')
 		if curTab: print('woohoo!')
 		curTab.paginate(page = request.GET.get('page', 1), per_page = 12)
-		context = {
-			'table': curTab,
-			'form': form,
-			'title': title,
-		}
+		if subContext:
+			context = subContext
+		else:
+			context = {
+				'table': curTab,
+				'form': form,
+				'title': title,
+			}
 		return render(request, 'subredresult.html', context)
 
 
@@ -95,7 +124,6 @@ def subred(request):
 		print(request.GET)
 		form = forms.subredditForm()
 
-	#qs = models.Posted_By.objects.filter(Q(author = 'keanex') | Q(author = 'Thaddel') )
 
 	context = {
 		"title": title,
@@ -108,6 +136,7 @@ def subred(request):
 def user(request):
 	title = 'User search'
 	global curTab
+	global userContext
 
 	form = forms.redditorForm(request.POST or None)
 	inSubreddit = ''
@@ -126,7 +155,7 @@ def user(request):
 			minScore = scores[1]
 			maxScore = scores[2]
 
-			qs = models.Posted_By.objects.filter(author = inRedditor).select_related("id")
+			qs = models.Posted_By.objects.filter(author = inRedditor).select_related("id").order_by('comment.score')
 			table = post_by_Table(qs)#, order_by = '-id')
 			curTab = table
 			if table:
@@ -142,17 +171,21 @@ def user(request):
 				'avgScore' :avgScore,
 				'minScore' :minScore,
 				'maxScore': maxScore,
-				'qs': qs,
 			}
+			userContext = context
 			return render(request, 'user.html', context)
 
 	elif request.GET:
+		print(request.GET.get)
 		curTab.paginate(page = request.GET.get('page', 1), per_page = 12)
-		context = {
-			'table': curTab,
-			'form': form,
-			'title': title,
-		}
+		if userContext:
+			context = userContext
+		else:
+			context = {
+				'table': curTab,
+				'form': form,
+				'title': title,
+			}
 		return render(request, 'user.html', context)
 
 	else:
