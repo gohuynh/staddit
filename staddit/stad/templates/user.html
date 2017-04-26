@@ -1,52 +1,74 @@
 <!-- stad/templates/user.html -->
 {% extends 'layout/layout.html' %}
 {% load django_tables2 %}
-{% block atitle %}Home Page{% endblock %}
+{% block atitle %}Results{% endblock %}
+
+{% block navbar %}
+              <li><a href="/#">Home</a></li>
+              <li><a href="/subred">Subreddits</a></li>
+              <li class="active"><a href="/user">Redditors</a></li>
+              <li><a href="/viz">Vizualizations</a></li>
+{% endblock %}
 
 {% block content %}
 
-<form method = 'POST' action = ''>{% csrf_token %}
-    {{form}}
-    <input type = 'submit' value = 'query' />
-</form>
-<h1 align = "center">/u/{{user}}</h1>
 
-<h1>Top comment: </h1>
-<blockquote class = "quote-block">
-{{topCom.0}}    
-<cite>{{user}} in <a href = "http://www.reddit.com/r/{{topCom.2}}">/r/{{topCom.2}}</a> with {{topCom.1}} points</cite>
-</blockquote>
+<div class="jumbotron" align = "center">
+     <div class="container">
+        <h1><font size = "8">Search for Another User</font></h1>
+        <p><form method = 'POST' action = ''>
+            <label for="author">/u/</label>
+            {% csrf_token %}<input type = "text" name = "author" placeholder = "user">
+            <!-- {% csrf_token %}{{form}} -->
+            <input type = 'submit' value = 'Search' /></form>
+        </p>
+     </div>
+</div>
 
-<h1>Sentiment analysis: </h1>
-Avg. score: {{avgScore}}<br>
-Min. score: {{minScore.1}}
-<blockquote class = "quote-block">
-    {{minScore.0}}
-    <cite><a href = "http://www.reddit.com/u/{{user}}">/u/{{user}}</a> </cite>
-</blockquote>
-Max. score: {{maxScore.1}}
-<blockquote class = "quote-block">
-    {{maxScore.0}}
-    <cite><a href = "http://www.reddit.com/u/{{user}}">/u/{{user}}</a> </cite>
-</blockquote>
+<div class="page-header" align = "center">
+    <h1>/u/{{user}}</h1>
+</div>
 
-<h1>Most commented in Subreddits:</h1>
-    <ol>
-        {% for sub in subQuer %}
-            <li><a href = "http://www.reddit.com/r/{{sub}}">/r/{{sub}}</a></li>
-        {% endfor %}
-    </ol>
-
-<h1>Jan. 17 comments</h1>
-
-<br><br>
-<div class = "container-fluid">
-    <!--<h3>table</h3>-->
-    <div class = "row">
-        <div class = "col-sm-10">
-            {% render_table table %}
-        </div>
+<div class="container">
+    <div class="col-md-4">
+        <h2>Top Comment</h2>
+        <blockquote class = "quote-block">
+            {{topCom.0}}    
+            <cite>{{user}} in <a href = "http://www.reddit.com/r/{{topCom.2}}">/r/{{topCom.2}}</a> with {{topCom.1}} points</cite>
+        </blockquote>
     </div>
+    <div class="col-md-4">
+        <h2>Sentiment analysis</h2>
+        Avg. score: {{avgScore}}<br>
+        Min. score: {{minScore.1}}
+        <blockquote class = "quote-block">
+            {{minScore.0}}
+            <cite><a href = "http://www.reddit.com/u/{{user}}">/u/{{user}}</a> </cite>
+        </blockquote>
+        Max. score: {{maxScore.1}}
+        <blockquote class = "quote-block">
+            {{maxScore.0}}
+            <cite><a href = "http://www.reddit.com/u/{{user}}">/u/{{user}}</a> </cite>
+        </blockquote>
+    </div>
+    <div class="col-md-4">
+        <h2>Most commented in Subreddits:</h2>
+        <ol>
+            {% for sub in subQuer %}
+            <li><a href = "http://www.reddit.com/r/{{sub}}">/r/{{sub}}</a></li>
+            {% endfor %}
+        </ol>
+    </div>
+</div>
+
+<div class="page-header" align = "center">
+    <h1>Past Comments</h1>
+</div>
+
+<br>
+
+<div class = "container-fluid">
+    {% render_table table %}
 </div>
 
 {% endblock %}

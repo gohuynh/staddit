@@ -2,7 +2,7 @@
 {% load django_tables2 %}
 <!DOCTYPE html>
 
-{% block atitle %}Home Page{% endblock %}
+{% block atitle %}Results{% endblock %}
 
 {% block navbar %}
               <li><a href="/#">Home</a></li>
@@ -13,29 +13,54 @@
 
 {% block content %}
 
-<h1 align = "center">/r/{{subreddit}}</h1>
+<div class="jumbotron" align = "center">
+     <div class="container">
+        <h1><font size = "8">Search Another Subreddit</font></h1>
+        <p><form method = 'POST' action = ''>
+            <label for="subreddit">/r/</label>
+            {% csrf_token %}<input type = "text" name = "subreddit" placeholder = "subreddit">
+            <input type = 'submit' value = 'Search' /></form>
+        </p>
+     </div>
+</div>
 
-<h1>Top comment: </h1>
-<blockquote class = "quote-block">
-{{topComm.0}}    
-<cite> <a href = "http://www.reddit.com/u/{{topComm.1}}">{{topComm.1}}</a> in /r/{{subreddit}}</a> with {{topComm.2}} points</cite>
-</blockquote>
+<div class="page-header" align = "center">
+	<h1>/r/{{subreddit}}</h1>
+</div>
 
-<h1>Most prodigious commenters:</h1>
-    <ol>
-    {% for u in mostPosted %}
-        <li><a href = "http://www.reddit.com/u/{{u.0}}"> {{u.0}}</a> ({{u.1}})</li> 
-    {% endfor %}
-    </ol>
+<div class="container">
+    <div class="col-md-4">
+        <h2>Top Comment</h2>
+        <blockquote class = "quote-block">
+			{{topComm.0}}    
+			<cite> <a href = "http://www.reddit.com/u/{{topComm.1}}">{{topComm.1}}</a> in /r/{{subreddit}}</a> with {{topComm.2}} points</cite>
+		</blockquote>
+    </div>
+    <div class="col-md-4">
+        <h2>Sentiment Analysis</h2>
+        Average score: {{avgScore}} <br>
+		Median score: {{medScore}} <br>
+		Standard Deviation of score: {{stdScore}}
+    </div>
+    <div class="col-md-4">
+        <h2>Most Prodigious Commenters</h2>
+        <ol>
+    		{% for u in mostPosted %}
+        	<li><a href = "http://www.reddit.com/u/{{u.0}}"> {{u.0}}</a> ({{u.1}})</li> 
+    		{% endfor %}
+    	</ol>
+    </div>
+</div>
 
-<h1>Sentiment analysis:</h1>
-Average score: {{avgScore}} <br>
-Median score: {{medScore}} <br>
-Standard Deviation of score: {{stdScore}}
+<div class="page-header" align = "center">
+    <h1>Comments in /r/{{subreddit}}</h1>
+</div>
 
+<br>
 
-<h1>Record of comments in /r/{{subreddit}} from January 2017</h1>
+<div class = "container-fluid">
+	{% render_table table %}
+</div>
 
-{% render_table table %}
 
 {% endblock %}

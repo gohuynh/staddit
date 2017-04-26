@@ -1,5 +1,4 @@
 {% extends 'layout/layout.html' %}
-{% load django_tables2 %}
 <!DOCTYPE html>
 
 {% block atitle %}Home Page{% endblock %}
@@ -12,13 +11,14 @@
 {% endblock %}
 
 {% block content %}
-
+<div class="container">
 <div class="jumbotron">
      <div class="container">
         <h1>Welcome to Staddit!</h1>
         <p>Explore the thousands of Reddit communities available. From /r/astrology to /r/zen, we have an extensive collection of comments within these subreddits. From any subreddit you specify, you can view general information about all the comments posted there such as the user, body, and score that the comment received. For any given user, you can see the comments they have posted and to where they have posted. Additionally you can see a visualization of the similarity of subreddit preferences among users.</p>
         <p><a class="btn btn-primary btn-lg" href="#" role="button">Learn more &raquo;</a></p>
      </div>
+</div>
 </div>
 
 {% endblock %}
